@@ -133,6 +133,11 @@ def compute_order_cogs(
         non_micro_base = rule.non_micro_base
 
     upsell_cost = round(upsell_units * rule.micro_upsell_cost, 2)
+    if upsell_units:
+        warnings.append(
+            "ordine con upsell: il fornitore ottimizza il pacco (consolida) -> "
+            "stima approssimata, riconciliare con il costo di fattura"
+        )
 
     addon_costs: dict[str, float] = {}
     for key, units in addon_units.items():

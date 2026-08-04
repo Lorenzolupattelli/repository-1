@@ -11,7 +11,7 @@
 
   "micro_upsell_cost": 6.40,
   "micro_upsell_max_price": 50.0,
-  "_upsell_note": "Upsell post-acquisto '+1 microinfusione a 20 euro' (riga micro con prezzo scontato <= 50). Costo fornitore +6.40 per unita. Verificato: #7697 (10.40+6.40=16.80).",
+  "_upsell_note": "Upsell '+1 micro a 20 euro' (riga micro scontata <= 50). Costo nominale +6.40 (#7697=16.80). MA il fornitore ottimizza il pacco: a volte consolida in un pacco piu grande costando meno (#7856), a volte NON lo fattura affatto (#7742=14.03). Quindi la stima va SEMPRE riconciliata col costo reale di fattura.",
 
   "addons": {
     "shampoo": 3.00,
