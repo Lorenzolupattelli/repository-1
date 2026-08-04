@@ -1,0 +1,18 @@
+# Secrets / credenziali — NON committare mai
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.python-version
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
