@@ -1,100 +1,131 @@
 """Calcolo COGS PRECISO per ordine Firmelià (nessuna media).
 
-Regola (fornita dal titolare, verificata sugli ordini reali):
+I costi sono caricati da ``cogs_firmelia.json`` (facile da aggiornare).
 
-  Base "Sistema di Microinfusione" per numero di pezzi nell'ordine
-  (= durata del trattamento):
-      2 pezzi (2 mesi) -> 7.63
-      3 pezzi (4 mesi) -> 10.40
-      5 pezzi (6 mesi) -> 14.03
-      6 pezzi          -> 16.80
-  Aggiunte:
-      Shampoo -> +3.00   Balsamo -> +3.00   Siero -> +2.50
-  Tax fissa per ordine -> +1.35
-  Articoli digitali (eBook, Supporto WhatsApp, Gift-Card) -> 0.00
+Regola (fornita dal titolare, verificata al centesimo su fatture reali):
+  - Base "Sistema di Microinfusione" per numero di pezzi nell'ordine
+    (= durata trattamento): 2pz->7.63, 3pz->10.40, 5pz->14.03, 6pz->16.80.
+  - Aggiunte lineari: shampoo +3.00, balsamo +3.00, siero +2.50.
+  - Tax fissa per ordine: +1.35.
+  - Articoli digitali/omaggio (eBook, WhatsApp, Gift-Card): 0.00.
+  - Ordine di sola gift-card (nessun prodotto fisico): COGS 0, nessuna tax.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
-# Costo base della microinfusione per numero di pezzi nell'ordine.
-# Estendibile man mano che compaiono nuove combinazioni (es. 4 pezzi).
-MICRO_COST_BY_UNITS: dict[int, float] = {
-    2: 7.63,
-    3: 10.40,
-    5: 14.03,
-    6: 16.80,
-}
-
-SHAMPOO_COST = 3.00
-BALSAMO_COST = 3.00
-SIERO_COST = 2.50
-TAX_PER_ORDER = 1.35
+import json
+from dataclasses import dataclass, field
+from pathlib import Path
 
 # Parole chiave per riconoscere i prodotti dai titoli delle righe ordine.
 MICRO_KW = "microinfusione"
-SHAMPOO_KW = "shampoo"
-BALSAMO_KW = "balsamo"
-SIERO_KW = "siero"
+ADDON_KWS = {
+    "shampoo": "shampoo",
+    "balsamo": "balsamo",
+    "siero": "siero",
+    "spazzola": "spazzola",
+}
+
+
+@dataclass(frozen=True)
+class CogsRule:
+    micro_cost_by_units: dict[int, float | None]
+    addons: dict[str, float | None]
+    tax_per_order: float
+    zero_cost_items: list[str] = field(default_factory=list)
+
+    @staticmethod
+    def load(path: str | Path = "cogs_firmelia.json") -> "CogsRule":
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        return CogsRule(
+            micro_cost_by_units={
+                int(k): v for k, v in data.get("micro_cost_by_units", {}).items()
+            },
+            addons=data.get("addons", {}),
+            tax_per_order=float(data.get("tax_per_order", 0.0)),
+            zero_cost_items=[s.lower() for s in data.get("zero_cost_items", [])],
+        )
 
 
 @dataclass
 class OrderCogs:
-    """Dettaglio COGS di un singolo ordine."""
-
     order: str
     micro_units: int
     micro_cost: float
-    shampoo_cost: float
-    balsamo_cost: float
-    siero_cost: float
+    addon_costs: dict[str, float]
     tax: float
     total_cogs: float
-    unknown_micro_tier: bool  # True se i pezzi microinfusione non sono in tabella
+    warnings: list[str]
 
 
-def compute_order_cogs(order_name: str, line_items: list[dict]) -> OrderCogs:
+def compute_order_cogs(
+    order_name: str, line_items: list[dict], rule: CogsRule
+) -> OrderCogs:
     """Calcola il COGS esatto di un ordine dai suoi line items.
 
-    :param line_items: lista di dict con almeno ``title`` e ``quantity``.
+    ``line_items``: lista di dict con almeno ``title`` e ``quantity``.
     """
     micro_units = 0
-    shampoo_units = 0
-    balsamo_units = 0
-    siero_units = 0
+    addon_units: dict[str, int] = {k: 0 for k in ADDON_KWS}
+    warnings: list[str] = []
+    physical_present = False
 
     for item in line_items:
         title = (item.get("title") or "").lower()
         qty = int(item.get("quantity") or 0)
         if MICRO_KW in title:
             micro_units += qty
-        elif SHAMPOO_KW in title:
-            shampoo_units += qty
-        elif BALSAMO_KW in title:
-            balsamo_units += qty
-        elif SIERO_KW in title:
-            siero_units += qty
-        # tutto il resto (eBook, WhatsApp, Gift-Card, ...) = costo 0
+            physical_present = True
+            continue
+        matched = False
+        for key, kw in ADDON_KWS.items():
+            if kw in title:
+                addon_units[key] += qty
+                physical_present = True
+                matched = True
+                break
+        if matched:
+            continue
+        # Se non e' un articolo a costo zero noto, segnalalo.
+        if not any(z in title for z in rule.zero_cost_items):
+            warnings.append(f"articolo non mappato: '{item.get('title')}'")
 
-    unknown = micro_units not in MICRO_COST_BY_UNITS and micro_units > 0
-    micro_cost = MICRO_COST_BY_UNITS.get(micro_units, 0.0)
+    # Ordine senza prodotti fisici (es. sola gift-card): COGS 0, no tax.
+    if not physical_present:
+        return OrderCogs(order_name, 0, 0.0, {}, 0.0, 0.0,
+                         warnings + ["nessun prodotto fisico -> COGS 0"])
 
-    shampoo_cost = shampoo_units * SHAMPOO_COST
-    balsamo_cost = balsamo_units * BALSAMO_COST
-    siero_cost = siero_units * SIERO_COST
-    tax = TAX_PER_ORDER
+    # Base microinfusione.
+    micro_cost = 0.0
+    if micro_units:
+        val = rule.micro_cost_by_units.get(micro_units)
+        if val is None:
+            warnings.append(
+                f"costo per {micro_units} pezzi microinfusione NON definito"
+            )
+        else:
+            micro_cost = val
 
-    total = round(micro_cost + shampoo_cost + balsamo_cost + siero_cost + tax, 2)
+    # Aggiunte.
+    addon_costs: dict[str, float] = {}
+    for key, units in addon_units.items():
+        if not units:
+            continue
+        price = rule.addons.get(key)
+        if price is None:
+            warnings.append(f"costo aggiunta '{key}' NON definito ({units} pz)")
+            continue
+        addon_costs[key] = round(price * units, 2)
+
+    tax = rule.tax_per_order
+    total = round(micro_cost + sum(addon_costs.values()) + tax, 2)
 
     return OrderCogs(
         order=order_name,
         micro_units=micro_units,
         micro_cost=micro_cost,
-        shampoo_cost=round(shampoo_cost, 2),
-        balsamo_cost=round(balsamo_cost, 2),
-        siero_cost=round(siero_cost, 2),
+        addon_costs=addon_costs,
         tax=tax,
         total_cogs=total,
-        unknown_micro_tier=unknown,
+        warnings=warnings,
     )

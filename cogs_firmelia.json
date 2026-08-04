@@ -1,0 +1,27 @@
+{
+  "_note": "Regola COGS PRECISA per Firmelià (nessuna media). null = valore da definire.",
+  "currency": "EUR",
+
+  "micro_cost_by_units": {
+    "1": null,
+    "2": 7.63,
+    "3": 10.40,
+    "4": null,
+    "5": 14.03,
+    "6": 16.80
+  },
+  "_micro_note": "Costo base 'Sistema di Microinfusione' per numero di pezzi nell'ordine (= durata trattamento). 2pz=2mesi, 3pz=4mesi, 5pz=6mesi.",
+
+  "addons": {
+    "shampoo": 3.00,
+    "balsamo": 3.00,
+    "siero": 2.50,
+    "spazzola": null
+  },
+  "_addons_note": "Costo per unita, lineare (2 shampoo = 2 x 3.00). spazzola = 'Spazzola per Microcircolazione', da definire.",
+
+  "tax_per_order": 1.35,
+
+  "zero_cost_items": ["ebook", "whatsapp", "supporto", "gift-card"],
+  "_zero_note": "Articoli senza COGS (digitali/omaggio). Un ordine di sola gift-card non spedisce nulla -> COGS 0 e nessuna tax."
+}
