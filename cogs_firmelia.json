@@ -1,16 +1,17 @@
 {
-  "_note": "Regola COGS PRECISA per Firmelià, RICAVATA dal confronto fatture-fornitore <-> ordini Shopify (nessuna media). Valori verificati al centesimo.",
+  "_note": "Regola COGS Firmelià, RICAVATA dal confronto fatture-fornitore <-> ordini Shopify. Il costo dipende dal PIANO di trattamento (valore ordine), NON dal numero di pezzi.",
   "currency": "EUR",
 
-  "micro_cost_by_units": {
-    "1": 10.40,
+  "micro_base_by_main_units": {
     "2": 7.63,
     "3": 10.40,
-    "5": 14.03,
-    "6": 16.80,
-    "10": 23.20
+    "5": 14.03
   },
-  "_micro_note": "Costo base 'Sistema di Microinfusione' per numero TOTALE di pezzi nell'ordine (somma delle righe). NON lineare: ogni quantita e un bundle a se. Ricavato da: #7703(2->7.63), #7700(3->10.40), #7710(5->14.03), #7742(6->16.80), #7851(10->23.20).",
+  "_micro_note": "Costo base del bundle principale microinfusione, per pezzi della riga principale (@~99.99). 2pz=2mesi(59.90), 3pz=4mesi(79.90), 5pz=6mesi(109.90). Verificato: #7703, #7700, #7710.",
+
+  "micro_upsell_cost": 6.40,
+  "micro_upsell_max_price": 50.0,
+  "_upsell_note": "Upsell post-acquisto '+1 microinfusione a 20 euro' (riga micro con prezzo scontato <= 50). Costo fornitore +6.40 per unita. Verificato: #7697 (10.40+6.40=16.80).",
 
   "addons": {
     "shampoo": 3.00,
@@ -20,13 +21,15 @@
     "spazzola": 0.00,
     "infusore": 0.00
   },
-  "_addons_note": "Costo per unita, lineare. Ricavato da: balsamo #7734, siero #7731(7.63+2.5=10.13), routine #7729(14.03+8.5=22.53). spazzola/infusore = 0 (non a costo).",
+  "_addons_note": "Costo add-on (con microinfusione presente), lineare. routine add-on 8.50 / da sola 12.00 (=8.50+3.50 base). Verificato: balsamo #7734, siero #7731, routine #7848(sola=12).",
 
   "non_micro_base": 3.50,
-  "_base_note": "Base (spedizione) aggiunta SOLO agli ordini senza microinfusione (solo haircare). Ricavato da #7789(1 shampoo=6.50=3.00+3.50) e #7722(4 shampoo+1 balsamo=18.50=12+3+3.50).",
+  "_base_note": "Base spedizione aggiunta SOLO agli ordini senza microinfusione. Il prezzo 'da solo' = add-on + 3.50. Verificato #7789(shampoo solo=6.50), #7848(routine sola=12.00).",
 
   "tax_per_order": 1.35,
 
   "zero_cost_items": ["ebook", "whatsapp", "supporto", "gift-card", "ordine di prova"],
-  "_zero_note": "Articoli senza COGS (digitali/omaggio/test). Ordine di sola gift-card non spedisce -> COGS 0 e nessuna tax. 'ordine di prova' = test, costo 0."
+  "_zero_note": "Articoli senza COGS. Ordine di sola gift-card non spedisce -> COGS 0, no tax.",
+
+  "_edge_cases": "Bundle multipli pieni (es. #7851 due 6-mesi=23.20) e billing incoerente del fornitore (es. #7742 upsell non fatturato) NON sono deterministici: per questi usare il costo REALE della fattura."
 }
