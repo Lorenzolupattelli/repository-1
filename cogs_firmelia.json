@@ -16,9 +16,9 @@
     "shampoo": 3.00,
     "balsamo": 3.00,
     "siero": 2.50,
-    "spazzola": null
+    "spazzola": 0.00
   },
-  "_addons_note": "Costo per unita, lineare (2 shampoo = 2 x 3.00). spazzola = 'Spazzola per Microcircolazione', da definire.",
+  "_addons_note": "Costo per unita, lineare (2 shampoo = 2 x 3.00). spazzola = 'Spazzola per Microcircolazione': prodotto NON piu venduto, costo 0.",
 
   "tax_per_order": 1.35,
 
