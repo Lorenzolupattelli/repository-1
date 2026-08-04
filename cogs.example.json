@@ -1,0 +1,26 @@
+{
+  "_note": "Costo di produzione/acquisto per unita (COGS) di ogni prodotto, nella valuta dello store (EUR). Copia questo file in cogs.json e inserisci i costi reali. Il 'price' e indicativo (prezzo di vendita) per aiutarti a compilare.",
+  "currency": "EUR",
+  "products": [
+    { "name": "Firmelià Crema Collo Roll-Lift",              "price": 39.00,  "unit_cost": 0.0 },
+    { "name": "Firmelià Cera-Nol Maschera Viso",             "price": 29.90,  "unit_cost": 0.0 },
+    { "name": "Firmelià Detergente Crystal Pure",            "price": 19.90,  "unit_cost": 0.0 },
+    { "name": "Firmelià Crema Gel Collagene",                "price": 34.90,  "unit_cost": 0.0 },
+    { "name": "Firmelià Crema Solare Al Collagene",          "price": 24.90,  "unit_cost": 0.0 },
+    { "name": "Firmelià Scrub Viso & Corpo Al Caffè Arabico","price": 39.90,  "unit_cost": 0.0 },
+    { "name": "Firmelià Scultore Facciale Led",              "price": 89.00,  "unit_cost": 0.0 },
+    { "name": "Firmelià Cuscino Posturale Lift",             "price": 199.90, "unit_cost": 0.0 },
+    { "name": "Firmelià Bio-Maschera Collo",                 "price": 29.90,  "unit_cost": 0.0 },
+    { "name": "Firmelià Jade Roll e Gua & Sha",              "price": 34.90,  "unit_cost": 0.0 },
+    { "name": "Firmelià Set Notte Rigenerativo in Vera Seta","price": 59.90,  "unit_cost": 0.0 },
+    { "name": "Firmelià Patch Occhi Oro 24K",                "price": 39.90,  "unit_cost": 0.0 },
+    { "name": "Guanto Esfoliante Firmelià™",                 "price": 20.00,  "unit_cost": 0.0 },
+    { "name": "Kit Spray Peli Viso Firmelià™",               "price": 29.00,  "unit_cost": 0.0 },
+    { "name": "Scrub Corpo Organico Firmelià™",              "price": 29.00,  "unit_cost": 0.0 }
+  ],
+  "_optional_costs": "Costi extra usati nel P&L. blended_cogs_rate e una alternativa: se non vuoi il COGS per-prodotto, imposta una percentuale media dei ricavi (es. 0.30 = 30%).",
+  "blended_cogs_rate": null,
+  "shipping_cost_per_order": 0.0,
+  "transaction_fee_rate": 0.0,
+  "fixed_daily_cost": 0.0
+}
