@@ -23,7 +23,9 @@ ADDON_KWS = {
     "shampoo": "shampoo",
     "balsamo": "balsamo",
     "siero": "siero",
+    "routine": "routine",
     "spazzola": "spazzola",
+    "infusore": "infusore",
 }
 
 
@@ -32,6 +34,7 @@ class CogsRule:
     micro_cost_by_units: dict[int, float | None]
     addons: dict[str, float | None]
     tax_per_order: float
+    non_micro_base: float = 0.0
     zero_cost_items: list[str] = field(default_factory=list)
 
     @staticmethod
@@ -43,6 +46,7 @@ class CogsRule:
             },
             addons=data.get("addons", {}),
             tax_per_order=float(data.get("tax_per_order", 0.0)),
+            non_micro_base=float(data.get("non_micro_base", 0.0)),
             zero_cost_items=[s.lower() for s in data.get("zero_cost_items", [])],
         )
 
@@ -95,7 +99,7 @@ def compute_order_cogs(
         return OrderCogs(order_name, 0, 0.0, {}, 0.0, 0.0,
                          warnings + ["nessun prodotto fisico -> COGS 0"])
 
-    # Base microinfusione.
+    # Base microinfusione (o base spedizione se ordine solo-haircare).
     micro_cost = 0.0
     if micro_units:
         val = rule.micro_cost_by_units.get(micro_units)
@@ -105,6 +109,9 @@ def compute_order_cogs(
             )
         else:
             micro_cost = val
+    else:
+        # Nessuna microinfusione ma prodotti fisici (haircare): base spedizione.
+        micro_cost = rule.non_micro_base
 
     # Aggiunte.
     addon_costs: dict[str, float] = {}

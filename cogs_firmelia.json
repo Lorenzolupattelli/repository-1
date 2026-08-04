@@ -1,27 +1,32 @@
 {
-  "_note": "Regola COGS PRECISA per Firmelià (nessuna media). null = valore da definire.",
+  "_note": "Regola COGS PRECISA per Firmelià, RICAVATA dal confronto fatture-fornitore <-> ordini Shopify (nessuna media). Valori verificati al centesimo.",
   "currency": "EUR",
 
   "micro_cost_by_units": {
     "1": 10.40,
     "2": 7.63,
     "3": 10.40,
-    "4": null,
     "5": 14.03,
-    "6": 16.80
+    "6": 16.80,
+    "10": 23.20
   },
-  "_micro_note": "Costo base 'Sistema di Microinfusione' per numero di pezzi (ogni quantita e un bundle diverso, il costo NON e lineare). 2pz=2mesi, 3pz=4mesi, 5pz=6mesi. 1pz=bundle a se (10.40).",
+  "_micro_note": "Costo base 'Sistema di Microinfusione' per numero TOTALE di pezzi nell'ordine (somma delle righe). NON lineare: ogni quantita e un bundle a se. Ricavato da: #7703(2->7.63), #7700(3->10.40), #7710(5->14.03), #7742(6->16.80), #7851(10->23.20).",
 
   "addons": {
     "shampoo": 3.00,
     "balsamo": 3.00,
     "siero": 2.50,
-    "spazzola": 0.00
+    "routine": 8.50,
+    "spazzola": 0.00,
+    "infusore": 0.00
   },
-  "_addons_note": "Costo per unita, lineare (2 shampoo = 2 x 3.00). spazzola = 'Spazzola per Microcircolazione': prodotto NON piu venduto, costo 0.",
+  "_addons_note": "Costo per unita, lineare. Ricavato da: balsamo #7734, siero #7731(7.63+2.5=10.13), routine #7729(14.03+8.5=22.53). spazzola/infusore = 0 (non a costo).",
+
+  "non_micro_base": 3.50,
+  "_base_note": "Base (spedizione) aggiunta SOLO agli ordini senza microinfusione (solo haircare). Ricavato da #7789(1 shampoo=6.50=3.00+3.50) e #7722(4 shampoo+1 balsamo=18.50=12+3+3.50).",
 
   "tax_per_order": 1.35,
 
-  "zero_cost_items": ["ebook", "whatsapp", "supporto", "gift-card"],
-  "_zero_note": "Articoli senza COGS (digitali/omaggio). Un ordine di sola gift-card non spedisce nulla -> COGS 0 e nessuna tax."
+  "zero_cost_items": ["ebook", "whatsapp", "supporto", "gift-card", "ordine di prova"],
+  "_zero_note": "Articoli senza COGS (digitali/omaggio/test). Ordine di sola gift-card non spedisce -> COGS 0 e nessuna tax. 'ordine di prova' = test, costo 0."
 }
