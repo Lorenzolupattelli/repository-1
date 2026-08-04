@@ -3,14 +3,14 @@
   "currency": "EUR",
 
   "micro_cost_by_units": {
-    "1": null,
+    "1": 10.40,
     "2": 7.63,
     "3": 10.40,
     "4": null,
     "5": 14.03,
     "6": 16.80
   },
-  "_micro_note": "Costo base 'Sistema di Microinfusione' per numero di pezzi nell'ordine (= durata trattamento). 2pz=2mesi, 3pz=4mesi, 5pz=6mesi.",
+  "_micro_note": "Costo base 'Sistema di Microinfusione' per numero di pezzi (ogni quantita e un bundle diverso, il costo NON e lineare). 2pz=2mesi, 3pz=4mesi, 5pz=6mesi. 1pz=bundle a se (10.40).",
 
   "addons": {
     "shampoo": 3.00,
