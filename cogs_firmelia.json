@@ -5,13 +5,14 @@
   "micro_base_by_main_units": {
     "2": 7.63,
     "3": 10.40,
-    "5": 14.03
+    "5": 14.03,
+    "6": 16.80
   },
-  "_micro_note": "Costo base del bundle principale microinfusione, per pezzi della riga principale (@~99.99). 2pz=2mesi(59.90), 3pz=4mesi(79.90), 5pz=6mesi(109.90). Verificato: #7703, #7700, #7710.",
+  "_micro_note": "Costo base bundle microinfusione per pezzi della riga @~99.99. 2pz=2mesi(59.90), 3pz=4mesi(79.90), 5pz=6mesi(109.90), 6pz single=16.80 (#7812). Verificato: #7703, #7700, #7710.",
 
-  "micro_upsell_cost": 6.40,
+  "micro_upsell_bundle_cost": 16.80,
   "micro_upsell_max_price": 50.0,
-  "_upsell_note": "Upsell '+1 micro a 20 euro' (riga micro scontata <= 50). Costo nominale +6.40 (#7697=16.80). MA il fornitore ottimizza il pacco: a volte consolida in un pacco piu grande costando meno (#7856), a volte NON lo fattura affatto (#7742=14.03). Quindi la stima va SEMPRE riconciliata col costo reale di fattura.",
+  "_upsell_note": "Se l'ordine contiene l'upsell '+1 micro a 20 euro' (riga micro scontata <= 50), il fornitore spedisce un pacco consolidato -> base micro FISSA a 16.80 (non la base per pezzi). Verificato su 15 ordini: #7697,#7691,#7707,#7752,#7763,#7772,#7798,#7809,#7820,#7837,#7856,#7863,#7868,#7898. Eccezioni (usare fattura): #7742 (upsell non fatturato=14.03), #7817 (16.80 senza upsell, errore fornitore).",
 
   "addons": {
     "shampoo": 3.00,

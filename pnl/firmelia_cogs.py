@@ -36,7 +36,7 @@ ADDON_KWS = {
 @dataclass(frozen=True)
 class CogsRule:
     micro_base_by_main_units: dict[int, float]
-    micro_upsell_cost: float
+    micro_upsell_bundle_cost: float
     micro_upsell_max_price: float
     addons: dict[str, float | None]
     tax_per_order: float
@@ -50,7 +50,7 @@ class CogsRule:
             micro_base_by_main_units={
                 int(k): float(v) for k, v in d.get("micro_base_by_main_units", {}).items()
             },
-            micro_upsell_cost=float(d.get("micro_upsell_cost", 0.0)),
+            micro_upsell_bundle_cost=float(d.get("micro_upsell_bundle_cost", 16.80)),
             micro_upsell_max_price=float(d.get("micro_upsell_max_price", 50.0)),
             addons=d.get("addons", {}),
             tax_per_order=float(d.get("tax_per_order", 0.0)),
@@ -119,7 +119,15 @@ def compute_order_cogs(
     # Base microinfusione (bundle principale).
     micro_base = 0.0
     non_micro_base = 0.0
-    if main_units:
+    upsell_cost = 0.0
+    if upsell_units:
+        # Upsell presente: il fornitore spedisce un pacco consolidato -> base fissa.
+        micro_base = rule.micro_upsell_bundle_cost
+        warnings.append(
+            "ordine con upsell: base consolidata a "
+            f"{rule.micro_upsell_bundle_cost} (verificare con fattura)"
+        )
+    elif main_units:
         val = rule.micro_base_by_main_units.get(main_units)
         if val is None:
             warnings.append(
@@ -128,16 +136,9 @@ def compute_order_cogs(
             )
         else:
             micro_base = val
-    elif upsell_units == 0:
+    else:
         # Nessuna microinfusione: base spedizione per ordine solo-haircare.
         non_micro_base = rule.non_micro_base
-
-    upsell_cost = round(upsell_units * rule.micro_upsell_cost, 2)
-    if upsell_units:
-        warnings.append(
-            "ordine con upsell: il fornitore ottimizza il pacco (consolida) -> "
-            "stima approssimata, riconciliare con il costo di fattura"
-        )
 
     addon_costs: dict[str, float] = {}
     for key, units in addon_units.items():
