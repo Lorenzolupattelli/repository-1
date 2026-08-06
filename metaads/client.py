@@ -67,6 +67,26 @@ class MetaAdsClient:
         )
         return [dict(row) for row in insights]
 
+    def get_daily_spend(self, since: str, until: str) -> dict[str, float]:
+        """Spesa pubblicitaria per giorno tra ``since`` e ``until`` (YYYY-MM-DD).
+
+        Restituisce {data: spesa_eur}. Usa time_increment=1 per il dettaglio
+        giornaliero a livello account.
+        """
+        insights = self.account.get_insights(
+            fields=["spend"],
+            params={
+                "time_range": {"since": since, "until": until},
+                "time_increment": 1,
+            },
+        )
+        out: dict[str, float] = {}
+        for row in insights:
+            d = row.get("date_start")
+            if d:
+                out[d] = out.get(d, 0.0) + float(row.get("spend", 0) or 0)
+        return out
+
     def list_campaigns(self, limit: int = 50) -> list[dict[str, Any]]:
         """Elenca le campagne dell'account."""
         fields = ["name", "objective", "status", "daily_budget", "created_time"]
