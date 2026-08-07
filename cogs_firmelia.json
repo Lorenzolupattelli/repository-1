@@ -1,0 +1,36 @@
+{
+  "_note": "Regola COGS Firmelià, RICAVATA dal confronto fatture-fornitore <-> ordini Shopify. Il costo dipende dal PIANO di trattamento (valore ordine), NON dal numero di pezzi.",
+  "currency": "EUR",
+
+  "micro_base_by_main_units": {
+    "2": 7.63,
+    "3": 10.40,
+    "5": 14.03,
+    "6": 16.80
+  },
+  "_micro_note": "Costo base bundle microinfusione per pezzi della riga @~99.99. 2pz=2mesi(59.90), 3pz=4mesi(79.90), 5pz=6mesi(109.90), 6pz single=16.80 (#7812). Verificato: #7703, #7700, #7710.",
+
+  "micro_upsell_bundle_cost": 16.80,
+  "micro_upsell_max_price": 50.0,
+  "_upsell_note": "Se l'ordine contiene l'upsell '+1 micro a 20 euro' (riga micro scontata <= 50), il fornitore spedisce un pacco consolidato -> base micro FISSA a 16.80 (non la base per pezzi). Verificato su 15 ordini: #7697,#7691,#7707,#7752,#7763,#7772,#7798,#7809,#7820,#7837,#7856,#7863,#7868,#7898. Eccezioni (usare fattura): #7742 (upsell non fatturato=14.03), #7817 (16.80 senza upsell, errore fornitore).",
+
+  "addons": {
+    "shampoo": 3.00,
+    "balsamo": 3.00,
+    "siero": 2.50,
+    "routine": 8.50,
+    "spazzola": 0.00,
+    "infusore": 0.00
+  },
+  "_addons_note": "Costo add-on (con microinfusione presente), lineare. routine add-on 8.50 / da sola 12.00 (=8.50+3.50 base). Verificato: balsamo #7734, siero #7731, routine #7848(sola=12).",
+
+  "non_micro_base": 3.50,
+  "_base_note": "Base spedizione aggiunta SOLO agli ordini senza microinfusione. Il prezzo 'da solo' = add-on + 3.50. Verificato #7789(shampoo solo=6.50), #7848(routine sola=12.00).",
+
+  "tax_per_order": 1.35,
+
+  "zero_cost_items": ["ebook", "whatsapp", "supporto", "gift-card", "ordine di prova"],
+  "_zero_note": "Articoli senza COGS. Ordine di sola gift-card non spedisce -> COGS 0, no tax.",
+
+  "_edge_cases": "Bundle multipli pieni (es. #7851 due 6-mesi=23.20) e billing incoerente del fornitore (es. #7742 upsell non fatturato) NON sono deterministici: per questi usare il costo REALE della fattura."
+}
